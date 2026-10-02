@@ -18,8 +18,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { RequirePermissions } from '../common/decorators/require-permissions.decorator';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import { PermissionsGuard } from '../common/guards/permissions.guard';
 import type { AuthUser } from '../common/interfaces/auth-user.interface';
 import { ok, paginated } from '../common/utils/response';
 import { AddMemberDto } from './dto/add-member.dto';
@@ -28,17 +30,18 @@ import { ProjectMembersService } from './project-members.service';
 
 @ApiTags('Project Members')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 @Controller('projects/:projectId/members')
 export class ProjectMembersController {
   constructor(private readonly members: ProjectMembersService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Add a registered user to a project (owner/admin)' })
+  @RequirePermissions('members:create')
+  @ApiOperation({ summary: 'Add a registered user to a project' })
   @ApiResponse({ status: 201, description: 'Member added successfully' })
   @ApiResponse({
     status: 403,
-    description: 'Only owner or admin can add members',
+    description: 'You do not have permission to perform this action',
   })
   @ApiResponse({ status: 404, description: 'Project or user not found' })
   @ApiResponse({ status: 409, description: 'User is already a member' })
@@ -54,8 +57,13 @@ export class ProjectMembersController {
   }
 
   @Get()
+  @RequirePermissions('members:read')
   @ApiOperation({ summary: 'List project members' })
   @ApiResponse({ status: 200, description: 'Members retrieved successfully' })
+  @ApiResponse({
+    status: 403,
+    description: 'You do not have permission to perform this action',
+  })
   @ApiResponse({ status: 404, description: 'Project not found' })
   async list(
     @CurrentUser() user: AuthUser,
@@ -73,9 +81,13 @@ export class ProjectMembersController {
   }
 
   @Patch(':memberId')
-  @ApiOperation({ summary: "Change a member's role (owner/admin)" })
+  @RequirePermissions('members:update')
+  @ApiOperation({ summary: "Change a member's role" })
   @ApiResponse({ status: 200, description: 'Member updated successfully' })
-  @ApiResponse({ status: 403, description: 'Not allowed' })
+  @ApiResponse({
+    status: 403,
+    description: 'You do not have permission to perform this action',
+  })
   @ApiResponse({ status: 404, description: 'Project or member not found' })
   async updateRole(
     @CurrentUser() user: AuthUser,
@@ -91,9 +103,13 @@ export class ProjectMembersController {
 
   @Delete(':memberId')
   @HttpCode(200)
-  @ApiOperation({ summary: 'Remove a member from the project (owner/admin)' })
+  @RequirePermissions('members:delete')
+  @ApiOperation({ summary: 'Remove a member from the project' })
   @ApiResponse({ status: 200, description: 'Member removed successfully' })
-  @ApiResponse({ status: 403, description: 'Not allowed' })
+  @ApiResponse({
+    status: 403,
+    description: 'You do not have permission to perform this action',
+  })
   @ApiResponse({ status: 404, description: 'Project or member not found' })
   async remove(
     @CurrentUser() user: AuthUser,

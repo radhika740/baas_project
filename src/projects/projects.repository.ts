@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
+import { DEFAULT_ROLE_PERMISSIONS } from '../common/constants/permissions';
 import { DatabaseService } from '../database/database.service';
 
 export interface ProjectRow {
@@ -23,7 +24,7 @@ const DEFAULT_ROLES = [
 export class ProjectsRepository {
   constructor(private readonly db: DatabaseService) {}
 
-  /** Creates the project, its 4 default roles, and the owner's membership together. */
+  /** Creates the project, its 4 default roles (with permissions), and the owner's membership together. */
   async createWithDefaults(p: {
     id: string;
     name: string;
@@ -44,6 +45,14 @@ export class ProjectsRepository {
           'INSERT INTO roles (id, name, project_id, description) VALUES (?, ?, ?, ?)',
           [roleId, role.name, p.id, role.description],
         );
+
+        const permissions = DEFAULT_ROLE_PERMISSIONS[role.name] ?? [];
+        if (permissions.length > 0) {
+          await conn.query(
+            'INSERT IGNORE INTO role_permissions (role_id, permission_id) SELECT ?, id FROM permissions WHERE name IN (?)',
+            [roleId, [...permissions]],
+          );
+        }
       }
 
       await conn.execute(

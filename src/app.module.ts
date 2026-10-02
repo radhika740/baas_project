@@ -7,12 +7,14 @@ import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
 import { ProjectMembersModule } from './project-members/project-members.module';
 import { ProjectsModule } from './projects/projects.module';
+import { RolesModule } from './roles/roles.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     DatabaseModule,
+    RolesModule,
     HealthModule,
     UsersModule,
     AuthModule,
