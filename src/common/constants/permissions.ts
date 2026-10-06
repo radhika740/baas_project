@@ -14,6 +14,13 @@ export const ALL_PERMISSIONS = [
   'users:update',
   'users:delete',
   'roles:read',
+  'api-keys:create',
+  'api-keys:read',
+  'api-keys:delete',
+  'resources:create',
+  'resources:read',
+  'resources:update',
+  'resources:delete',
 ] as const;
 
 export const DEFAULT_ROLE_PERMISSIONS: Record<string, readonly string[]> = {
@@ -28,6 +35,9 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, readonly string[]> = {
     'records:read',
     'records:update',
     'records:delete',
+    'resources:create',
+    'resources:read',
+    'resources:update',
   ],
   Viewer: [
     'projects:read',
@@ -35,5 +45,6 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<string, readonly string[]> = {
     'users:read',
     'roles:read',
     'records:read',
+    'resources:read',
   ],
 };
