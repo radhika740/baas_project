@@ -1,3 +1,4 @@
+import { AuditService } from '../audit/audit.service';
 import {
   BadRequestException,
   ConflictException,
@@ -31,6 +32,7 @@ export class AuthService {
     private readonly refreshTokens: RefreshTokensRepository,
     private readonly jwt: JwtService,
     private readonly config: ConfigService,
+    private readonly audit: AuditService,
   ) {}
 
   async register(dto: RegisterDto) {

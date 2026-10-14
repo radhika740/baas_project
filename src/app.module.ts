@@ -1,3 +1,4 @@
+import { AuditModule } from './audit/audit.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
@@ -17,6 +18,7 @@ import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
+    AuditModule,
     ConfigModule.forRoot({ isGlobal: true }),
     ThrottlerModule.forRoot([{ ttl: 60000, limit: 100 }]),
     DatabaseModule,

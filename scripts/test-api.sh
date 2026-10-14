@@ -1,7 +1,7 @@
 #!/bin/bash
 BASE=http://localhost:3000/api/v1
-PHONE=9164464170
-PASS='Saeema124'
+PHONE="${TEST_PHONE:?Set TEST_PHONE first}"
+PASS="${TEST_PASS:?Set TEST_PASS first}"
 JSON='Content-Type: application/json'
 
 pretty() { python3 -m json.tool; }
