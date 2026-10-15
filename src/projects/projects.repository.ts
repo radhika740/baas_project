@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { DEFAULT_ROLE_PERMISSIONS } from '../common/constants/permissions';
 import { DatabaseService } from '../database/database.service';
-
 export interface ProjectRow {
   id: string;
   name: string;

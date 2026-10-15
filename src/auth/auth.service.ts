@@ -1,4 +1,3 @@
-import { AuditService } from '../audit/audit.service';
 import {
   BadRequestException,
   ConflictException,
@@ -10,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcryptjs';
 import { createHash, randomUUID } from 'crypto';
+import { AuditService } from '../audit/audit.service';
 import { UserRow } from '../users/users.repository';
 import { toPublicUser, UsersService } from '../users/users.service';
 import { ChangePasswordDto } from './dto/change-password.dto';
@@ -62,6 +62,7 @@ export class AuthService {
     if (user.status !== 'active') {
       throw new ForbiddenException('Account is not active');
     }
+    await this.audit.log({ userId: user.id, action: 'auth.login', resourceType: 'user', resourceId: user.id });
     return this.issueTokens(user);
   }
 
